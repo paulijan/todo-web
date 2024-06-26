@@ -1,9 +1,21 @@
-<script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+<template>
+  <div>
+    <h1>Home View</h1>
+    <p>Welcome to the home page!</p>
+  </div>
+</template>
+
+<script setup>
+
 </script>
 
-<template>
-  <main>
-    <TheWelcome />
-  </main>
-</template>
+<script>
+
+export default {
+  name: 'HomeView'
+}
+</script>
+
+<style scoped>
+/* CSS Styles */
+</style>
