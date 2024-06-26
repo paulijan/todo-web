@@ -1,18 +1,32 @@
 <template>
   <div id="app">
-    <ToDoList />
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> |
+      <router-link to="/todo">Todo List</router-link>
+    </nav>
+    <router-view/>
   </div>
 </template>
 
-<script setup lang="ts">
-import ToDoList from './components/ToDoList.vue';
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'App'
+});
 </script>
 
 <style>
-@import 'bootstrap/dist/css/bootstrap.min.css';
-
-#app {
-  text-align: center;
-  padding: 20px;
+nav {
+  padding: 10px;
+}
+nav a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: #42b983;
+}
+nav a.router-link-exact-active {
+  font-weight: bold;
 }
 </style>
