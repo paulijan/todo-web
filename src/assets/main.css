@@ -33,3 +33,45 @@ a,
     padding: 0 2rem;
   }
 }
+/* src/assets/styles.css */
+.container {
+  background: #f8f9fa;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: #343a40;
+}
+
+p, .lead {
+  color: #6c757d;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.welcome-box {
+  background: #fff;
+}
+
+.todo-item {
+  width: 100%;
+}
+
+.edit-form {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.edit-form input {
+  flex: 1;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: gray;
+}
