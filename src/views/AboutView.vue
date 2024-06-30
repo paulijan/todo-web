@@ -9,26 +9,12 @@
       <p>
         Unsere Mission ist es, Menschen auf der ganzen Welt dabei zu helfen, ihre täglichen Aufgaben effizienter zu verwalten. Wir glauben, dass eine gut organisierte To-Do Liste der Schlüssel zu einem produktiveren und stressfreieren Leben ist.
       </p>
-      <h2 class="mt-5">Das Team</h2>
-      <p>
-        Unser Team besteht aus erfahrenen Entwicklern und Designern, die sich leidenschaftlich dafür einsetzen, die besten Benutzererfahrungen zu schaffen.
+      <h2 class="mt-5">To-Do Liste</h2>
+      <p class="lead">
+        Mit unserer To-Do Listen Anwendung können Sie Ihre Aufgaben einfach hinzufügen, bearbeiten und verwalten. Behalten Sie den Überblick über Ihre Aufgaben und steigern Sie Ihre Produktivität.
       </p>
-      <div class="row mt-4">
-        <div class="col-md-4 text-center">
-          <img src="https://via.placeholder.com/150" alt="Team Member 1" class="rounded-circle mb-2" />
-          <h5>Max Mustermann</h5>
-          <p>Lead Developer</p>
-        </div>
-        <div class="col-md-4 text-center">
-          <img src="https://via.placeholder.com/150" alt="Team Member 2" class="rounded-circle mb-2" />
-          <h5>Maria Musterfrau</h5>
-          <p>Product Manager</p>
-        </div>
-        <div class="col-md-4 text-center">
-          <img src="https://via.placeholder.com/150" alt="Team Member 3" class="rounded-circle mb-2" />
-          <h5>John Doe</h5>
-          <p>UX/UI Designer</p>
-        </div>
+      <div class="mt-4">
+        <router-link to="/todo" class="btn btn-primary btn-lg">Zur To-Do Liste</router-link>
       </div>
     </div>
   </div>
@@ -52,12 +38,6 @@ export default defineComponent({
   font-size: 1.25rem;
 }
 
-img {
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
-}
-
 .about h1, .about h2 {
   color: #333;
   margin-bottom: 20px;
@@ -68,14 +48,7 @@ img {
   line-height: 1.5;
 }
 
-.row {
-  display: flex;
-  justify-content: center;
-}
-
-.col-md-4 {
-  flex: 0 0 33.333333%;
-  max-width: 33.333333%;
-  padding: 15px;
+.mt-4 {
+  margin-top: 1.5rem;
 }
 </style>
