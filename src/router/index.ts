@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import AboutView from '../views/AboutView.vue';
-import TodoList from '../views/ToDoList.vue'; 
+import ToDoList from '../views/ToDoList.vue';
+
+const BASE_URL = import.meta.env.VITE_BASE_URL || '/';
 
 const routes = [
   {
@@ -17,14 +19,13 @@ const routes = [
   {
     path: '/todo',
     name: 'todo',
-    component: TodoList
+    component: ToDoList
   }
 ];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  history: createWebHistory(BASE_URL), routes
 });
 
-export default router;
 
+export default router;

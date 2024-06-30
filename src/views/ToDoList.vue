@@ -1,38 +1,57 @@
 <template>
-  <div class="container">
-    <h1 class="my-4">To-Do List</h1>
-    <form @submit.prevent="addTodo">
-      <div class="input-group mb-3">
-        <input v-model="newTodo" type="text" class="form-control" placeholder="Add a new task" />
-        <div class="input-group-append">
-          <button class="btn btn-primary" type="submit">Add</button>
+  <div class="container d-flex flex-column justify-content-center align-items-center min-vh-100">
+    <div class="w-100">
+      <h1 class="my-4 text-center">Just Do It</h1>
+      <form @submit.prevent="addTodo">
+        <div class="input-group mb-3">
+          <input v-model="newTodo" type="text" class="form-control" placeholder="Neue Aufgabe hinzufügen" />
+          <button class="btn btn-primary" type="submit">Hinzufügen</button>
         </div>
+      </form>
+      <div class="mb-3">
+        <input v-model="filter" type="text" class="form-control" placeholder="Aufgaben filtern" />
       </div>
-    </form>
-    <ul class="list-group">
-      <li v-for="(todo, index) in sortedTodos" :key="todo.id" class="list-group-item d-flex justify-content-between align-items-center" :class="{ completed: todo.completed }">
-        <div class="todo-item">
-          <div v-if="editIndex === index" class="edit-form">
-            <input v-model="editTodo" @keyup.enter="updateTodo(index)" type="text" class="form-control" />
-            <button class="btn btn-primary btn-sm" @click="updateTodo(index)">Save</button>
-            <button class="btn btn-secondary btn-sm" @click="cancelEdit">Cancel</button>
-          </div>
-          <div v-else class="todo-text">
-            <input type="checkbox" v-model="todo.completed" @change="updateTodoStatus(index)" />
-            <span>{{ todo.what }}</span>
-            <div class="button-group">
-              <button class="btn btn-warning btn-sm" @click="editTask(index, todo.what)">Edit</button>
-              <button class="btn btn-danger btn-sm" @click="removeTodo(index)">Remove</button>
+      <div class="mb-3 d-flex justify-content-between">
+        <select v-model="sortOption" class="form-select">
+          <option value="default">Sortieren nach</option>
+          <option value="completed">Erledigt</option>
+          <option value="a-z">A-Z</option>
+          <option value="z-a">Z-A</option>
+        </select>
+      </div>
+      <ul class="list-group">
+        <li
+          v-for="(todo, index) in filteredAndSortedTodos"
+          :key="todo.id"
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          <div class="todo-item w-100 d-flex justify-content-between align-items-center">
+            <div v-if="editIndex === index" class="edit-form d-flex">
+              <input v-model="editTodo" @keyup.enter="updateTodo(index)" type="text" class="form-control mr-2" />
+              <button class="btn btn-primary btn-sm mr-2" @click="updateTodo(index)">Speichern</button>
+              <button class="btn btn-secondary btn-sm" @click="cancelEdit">Abbrechen</button>
+            </div>
+            <div v-else class="d-flex justify-content-between align-items-center w-100">
+              <div class="d-flex align-items-center">
+                <input type="checkbox" v-model="todo.completed" @change="updateTodoStatus(index)" />
+                <span :class="{ completed: todo.completed }" class="ml-2">{{ todo.what }}</span>
+              </div>
+              <div class="button-group d-flex">
+                <button class="btn btn-warning btn-sm mr-2" @click="editTask(index, todo.what)">✏️</button>
+                <button class="btn btn-danger btn-sm" @click="removeTodo(index)">🗑️</button>
+              </div>
             </div>
           </div>
-        </div>
-      </li>
-    </ul>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted, watch } from 'vue';
+import { computed, defineComponent, onMounted, ref } from 'vue';
+
+const BACKEND_BASE_URL = import.meta.env.VITE_APP_BACKEND_BASE_URL || 'http://localhost:8080';
 
 export default defineComponent({
   name: 'ToDoList',
@@ -40,32 +59,32 @@ export default defineComponent({
     const newTodo = ref('');
     const editTodo = ref('');
     const editIndex = ref<number | null>(null);
-    const todos = ref<{ id: number, what: string, completed: boolean }[]>([]);
+    const filter = ref('');
+    const sortOption = ref('default');
+    const todos = ref<{ id: number; what: string; completed: boolean }[]>([]);
 
     const addTodo = async () => {
       if (newTodo.value.trim() !== '') {
         const todo = {
           what: newTodo.value,
-          completed: false
+          completed: false,
         };
         try {
-          const response = await fetch('http://localhost:8080/api/v1/todos', {
+          const response = await fetch(`${BACKEND_BASE_URL}/api/v1/todos`, {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
             },
-            body: JSON.stringify(todo)
+            body: JSON.stringify(todo),
           });
           if (response.ok) {
-            const data = await response.json();
-            todos.value.push(data);
+            await loadTodos();
             newTodo.value = '';
-            sortTodos();
           } else {
-            console.error('Failed to add todo:', response.statusText);
+            console.error('Fehler beim Hinzufügen der Aufgabe:', response.statusText);
           }
         } catch (error) {
-          console.error('Error adding todo:', error);
+          console.error('Fehler beim Hinzufügen der Aufgabe:', error);
         }
       }
     };
@@ -73,40 +92,30 @@ export default defineComponent({
     const removeTodo = async (index: number) => {
       const todoId = todos.value[index].id;
       try {
-        const response = await fetch(`http://localhost:8080/api/v1/todos/${todoId}`, {
+        const response = await fetch(`${BACKEND_BASE_URL}/api/v1/todos/${todoId}`, {
           method: 'DELETE',
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
         if (response.ok) {
-          todos.value.splice(index, 1);
+          await loadTodos();
         } else {
-          console.error('Failed to remove todo:', response.statusText);
+          console.error('Fehler beim Entfernen der Aufgabe:', response.statusText);
         }
       } catch (error) {
-        console.error('Error removing todo:', error);
+        console.error('Fehler beim Entfernen der Aufgabe:', error);
       }
     };
 
     const loadTodos = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/v1/todos');
+        const response = await fetch(`${BACKEND_BASE_URL}/api/v1/todos`);
         const data = await response.json();
-        todos.value = data;
-        sortTodos();
+        todos.value = data.map((todo: any) => ({ ...todo, id: Number(todo.id) }));
       } catch (error) {
-        console.error('Error loading todos:', error);
+        console.error('Fehler beim Laden der Aufgaben:', error);
       }
-    };
-
-    const sortTodos = () => {
-      todos.value.sort((a, b) => {
-        if (a.completed === b.completed) {
-          return b.id - a.id;
-        }
-        return a.completed ? 1 : -1;
-      });
     };
 
     const editTask = (index: number, what: string) => {
@@ -119,26 +128,25 @@ export default defineComponent({
       const updatedTodo = {
         id: todoId,
         what: editTodo.value,
-        completed: todos.value[index].completed
+        completed: todos.value[index].completed,
       };
       try {
-        const response = await fetch(`http://localhost:8080/api/v1/todos/${todoId}`, {
+        const response = await fetch(`${BACKEND_BASE_URL}/api/v1/todos/${todoId}`, {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify(updatedTodo)
+          body: JSON.stringify(updatedTodo),
         });
         if (response.ok) {
-          todos.value[index].what = editTodo.value;
+          await loadTodos();
           editIndex.value = null;
           editTodo.value = '';
-          sortTodos();
         } else {
-          console.error('Failed to update todo:', response.statusText);
+          console.error('Fehler beim Aktualisieren der Aufgabe:', response.statusText);
         }
       } catch (error) {
-        console.error('Error updating todo:', error);
+        console.error('Fehler beim Aktualisieren der Aufgabe:', error);
       }
     };
 
@@ -147,23 +155,23 @@ export default defineComponent({
       const updatedTodo = {
         id: todoId,
         what: todos.value[index].what,
-        completed: todos.value[index].completed
+        completed: todos.value[index].completed,
       };
       try {
-        const response = await fetch(`http://localhost:8080/api/v1/todos/${todoId}`, {
+        const response = await fetch(`${BACKEND_BASE_URL}/api/v1/todos/${todoId}`, {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify(updatedTodo)
+          body: JSON.stringify(updatedTodo),
         });
         if (response.ok) {
-          sortTodos();
+          await loadTodos();
         } else {
-          console.error('Failed to update todo status:', response.statusText);
+          console.error('Fehler beim Aktualisieren des Aufgabenstatus:', response.statusText);
         }
       } catch (error) {
-        console.error('Error updating todo status:', error);
+        console.error('Fehler beim Aktualisieren des Aufgabenstatus:', error);
       }
     };
 
@@ -172,12 +180,24 @@ export default defineComponent({
       editTodo.value = '';
     };
 
-    const sortedTodos = computed(() => {
-      return [...todos.value];
-    });
+    const filteredAndSortedTodos = computed(() => {
+      let filteredTodos = todos.value.filter(todo => todo.what.toLowerCase().includes(filter.value.toLowerCase()));
 
-    watch(todos, () => {
-      sortTodos();
+      switch (sortOption.value) {
+        case 'completed':
+          filteredTodos = filteredTodos.filter(todo => todo.completed);
+          break;
+        case 'a-z':
+          filteredTodos = filteredTodos.sort((a, b) => a.what.localeCompare(b.what));
+          break;
+        case 'z-a':
+          filteredTodos = filteredTodos.sort((a, b) => b.what.localeCompare(a.what));
+          break;
+        default:
+          break;
+      }
+
+      return filteredTodos;
     });
 
     onMounted(() => {
@@ -188,51 +208,23 @@ export default defineComponent({
       newTodo,
       editTodo,
       editIndex,
+      filter,
+      sortOption,
       todos,
-      sortedTodos,
+      filteredAndSortedTodos,
       addTodo,
       removeTodo,
       editTask,
       updateTodo,
       updateTodoStatus,
-      cancelEdit
+      cancelEdit,
     };
   },
 });
 </script>
 
 <style scoped>
-.container {
-  max-width: 600px;
-}
-
-.todo-item {
-  width: 100%;
-}
-
-.todo-text {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.button-group {
-  display: flex;
-  gap: 10px;
-}
-
-.edit-form {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-}
-
-.edit-form input {
-  flex: 1;
-}
-
 .completed {
   text-decoration: line-through;
-  color: gray;
 }
 </style>

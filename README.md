@@ -1,3 +1,35 @@
+# To-Do Liste Anwendung
+
+## Übersicht
+
+Dies ist eine einfache To-Do Listen-Anwendung, die mit Vue.js entwickelt wurde. Die Anwendung ermöglicht es Benutzern, Aufgaben hinzuzufügen, zu bearbeiten, zu löschen und den Status der Aufgaben zu ändern. Die Anwendung verwendet Bootstrap für das Styling und kommuniziert mit einem Backend-Server für das Speichern der Aufgaben.
+
+## Funktionen
+
+- Aufgaben hinzufügen
+- Aufgaben bearbeiten
+- Aufgaben löschen
+- Aufgabenstatus ändern (erledigt/nicht erledigt)
+- Aufgaben filtern und sortieren
+
+## Technologien
+
+- Vue.js 3
+- Vue Router
+- Bootstrap 5
+- Fetch API für die Kommunikation mit dem Backend
+
+## Voraussetzungen
+
+Stellen Sie sicher, dass Node.js und npm auf Ihrem Rechner installiert sind. Diese Anwendung verwendet die Vue CLI für die Entwicklung.
+
+## Installation
+
+1. Klonen Sie das Repository:
+   ```bash
+   git clone https://github.com/username/todo-list-app.git
+
+
 # todo-web
 
 This template should help get you started developing with Vue 3 in Vite.
