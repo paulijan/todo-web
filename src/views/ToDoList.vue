@@ -51,7 +51,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from 'vue';
 
-const BACKEND_BASE_URL = import.meta.env.VUE_APP_BACKEND_BASE_URL || 'http://localhost:8080';
+const BACKEND_BASE_URL = import.meta.env.VITE_APP_BACKEND_BASE_URL;
 
 export default defineComponent({
   name: 'ToDoList',
