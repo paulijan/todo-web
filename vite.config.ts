@@ -9,6 +9,9 @@ export default defineConfig({
     vue(),
     VueDevTools(),
   ],
+  define: {
+    'process.env': process.env
+  },
   root: path.resolve(__dirname, 'src'),
   resolve: {
     alias: {

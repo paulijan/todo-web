@@ -3,7 +3,7 @@ import HomeView from '../views/HomeView.vue';
 import AboutView from '../views/AboutView.vue';
 import ToDoList from '../views/ToDoList.vue';
 
-const BASE_URL = import.meta.env.VITE_BASE_URL || '/';
+const BASE_URL = import.meta.env.VUE_BASE_URL || '/';
 
 const routes = [
   {
