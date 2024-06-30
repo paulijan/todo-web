@@ -20,8 +20,21 @@
    ```bash
    git clone <repository_url>
    cd todo-web
+   
+2. **Install dependencies:**
+   ```bash
+   npm install
+   
+3. **Set up environment variables:**
+   Create a .env file in the root directory and add the backend base URL:
+   ``bash
+   VITE_APP_BACKEND_BASE_URL=http://localhost:3000
+   
+4. **Run the application:**
+   ```bash
+   npm run dev
 
-2. **
+   
 ### Usage
 
 **Adding a Task:**
@@ -67,21 +80,21 @@ The styles define the appearance of completed tasks.
 
 ### Development
 
-To build and preview the application for production:
-
-npm run build
-npm run preview
-
-
-To run unit tests:
-
-npm run test:unit
+- **To build and preview the application for production:**
+    ```bash
+    npm run build
+    npm run preview
 
 
-To lint and format the code:
+- **To run unit tests:**
+    ```bash
+    npm run test:unit
 
-npm run lint
-npm run format
+
+- **To lint and format the code:**
+    ```bash
+    npm run lint
+    npm run format
 
 ### Dependencies
 
